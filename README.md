@@ -70,3 +70,11 @@ nueva que toca cuatro ficheros. Sirven para medir cualquier otro modelo local.
 - Driver con CUDA 13.x
 - Visual Studio Build Tools 2022 (workload C++), CUDA Toolkit, CMake, Ninja
 - ~110 GB de disco para los modelos
+
+## Licencia
+
+MIT — ver [LICENSE](LICENSE).
+
+Los componentes que se instalan tienen sus propias licencias: Qwen3.6, Goose,
+Z-Image y llama.cpp son Apache 2.0 / MIT; Open WebUI tiene una licencia propia
+que restringe alterar su marca.
