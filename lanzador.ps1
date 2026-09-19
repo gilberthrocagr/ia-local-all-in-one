@@ -78,5 +78,13 @@ switch ($App) {
         Start-Process 'cmd.exe' -ArgumentList '/k', 'echo Estas listo para usar Aider. Ve a tu proyecto con: cd C:\ruta\del\proyecto  y ejecuta: C:\AI\aider-qwen.cmd'
     }
 
+    'goosecli' {
+        # Goose en terminal. Necesita ventana: es una consola interactiva.
+        if (-not (Iniciar-Servicio 'C:\AI\start-qwen.cmd' 8080 90)) {
+            Aviso "El modelo no arranco.`n`nAbre C:\AI\start-qwen.cmd a mano para ver el error." 'IA - Agente (terminal)'; break
+        }
+        Start-Process 'cmd.exe' -ArgumentList '/c', 'C:\AI\goose-qwen.cmd session'
+    }
+
     default { Aviso "Aplicacion desconocida: $App" 'Lanzador IA' }
 }
