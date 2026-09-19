@@ -14,10 +14,10 @@ extensions:
     enabled: true
     type: stdio
     name: comfyui
-    cmd: C:\Users\gilbe\.local\bin\comfy-mcp.exe
+    cmd: C:\Users\<TU_USUARIO>\.local\bin\comfy-mcp.exe
     args: []
     envs:
-      COMFY_BIN: C:\Users\gilbe\AppData\Roaming\uv\tools\comfy-mcp\Scripts\comfy.exe
+      COMFY_BIN: C:\Users\<TU_USUARIO>\AppData\Roaming\uv\tools\comfy-mcp\Scripts\comfy.exe
       COMFY_HOST: 127.0.0.1
       COMFY_PORT: '8188'
       COMFY_T2I_TEMPLATE: image_z_image_turbo_int8
@@ -29,7 +29,7 @@ extensions:
     enabled: true
     type: stdio
     name: framepack
-    cmd: C:\Users\gilbe\AppData\Local\Microsoft\WinGet\Packages\astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe\uv.exe
+    cmd: C:\Users\<TU_USUARIO>\AppData\Local\Microsoft\WinGet\Packages\astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe\uv.exe
     args:
       - run
       - --with

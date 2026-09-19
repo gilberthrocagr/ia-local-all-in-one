@@ -1,6 +1,6 @@
 @echo off
 REM ===== Compilacion de llama.cpp con CUDA para RTX 1000 Ada (sm_89) =====
-REM Generado para Gilberth - ThinkPad P16v Gen 2
+REM Para ThinkPad P16v Gen 2 (RTX 1000 Ada, 6 GB VRAM)
 setlocal
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"

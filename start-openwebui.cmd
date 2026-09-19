@@ -11,5 +11,5 @@ set "WEBUI_AUTH=False"
 set "HOST=127.0.0.1"
 set "PORT=3000"
 title Open WebUI
-"C:\Users\gilbe\.local\bin\open-webui.exe" serve --host 127.0.0.1 --port 3000
+"%USERPROFILE%\.local\bin\open-webui.exe" serve --host 127.0.0.1 --port 3000
 pause

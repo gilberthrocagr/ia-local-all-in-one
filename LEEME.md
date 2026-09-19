@@ -79,7 +79,7 @@ C:\AI\goose-qwen.cmd run -t "tarea"   (una sola tarea)
 ```
 
 **Está en modo `approve`**: te pide permiso antes de ejecutar cualquier comando. Deliberado, por lo mismo de arriba. Si algún día quieres que vaya solo, cambia `GOOSE_MODE` a `auto` en:
-`C:\Users\gilbe\AppData\Roaming\Block\goose\config\config.yaml`
+`%APPDATA%\Block\goose\config\config.yaml`
 
 ---
 
@@ -187,7 +187,7 @@ sin cerrar nada, pero si tienes prisa cierra el LLM y úsalo desde su propia ven
 En esperas tan largas puede aparecer un `Network error: Stream decode error`: es la conexión
 con el LLM cortándose, no el vídeo fallando. Goose se recupera solo.
 
-Config en: `C:\Users\gilbe\AppData\Roaming\Block\goose\config\config.yaml`
+Config en: `%APPDATA%\Block\goose\config\config.yaml`
 
 ### AVISO IMPORTANTE: el modelo se inventa verificaciones
 
@@ -332,7 +332,7 @@ En la prueba 2 usó `round()` para redondear dinero. Python hace **redondeo banc
 
 Acertó **todas** las reglas de negocio con trampa (km hacia arriba, 5 kg exactos sin
 recargo, mínimo aplicado tras hora pico, ValueError en negativos). Falló solo en ese
-detalle de especialista. **En facturación de Deliservy eso es dinero mal cobrado**, así
+detalle de especialista. **En cualquier código que facture, eso es dinero mal cobrado**, así
 que revisa el redondeo siempre que el código toque importes.
 
 ### Comparado con Claude Code
