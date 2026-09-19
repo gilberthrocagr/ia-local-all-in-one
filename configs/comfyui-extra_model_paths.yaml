@@ -1,0 +1,18 @@
+# Carpeta central de modelos, fuera de ComfyUI.
+# Asi una reinstalacion o actualizacion de ComfyUI no toca los modelos,
+# y SwarmUI u otro front pueden compartir los mismos ficheros.
+central:
+    base_path: C:\AI\models
+    is_default: true
+    diffusion_models: |
+        image/diffusion_models
+        video/diffusion_models
+    text_encoders: |
+        image/text_encoders
+        video/text_encoders
+    vae: |
+        image/vae
+        video/vae
+    loras: |
+        image/loras
+        video/loras

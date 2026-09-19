@@ -1,0 +1,7 @@
+# Aider contra Qwen3.6-35B-A3B servido por llama.cpp en local
+model: openai/qwen3.6
+model-metadata-file: C:\AI\.aider.model.metadata.json
+edit-format: diff
+auto-commits: false
+gitignore: false
+show-model-warnings: false
