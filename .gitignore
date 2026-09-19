@@ -1,0 +1,22 @@
+# ===== Modelos y aplicaciones: NO van a git =====
+# Son 110 GB descargables. Lo que se versiona es como montarlos, no ellos.
+models/
+tools/
+ComfyUI/
+FramePack/
+GooseDesktop/
+llama.cpp/
+openwebui-data/
+
+# ===== Salidas y temporales =====
+__pycache__/
+*.pyc
+*.mp4
+*.png
+*.jpg
+*.webp
+.pytest_cache/
+baseline-tokps.txt
+
+# ===== Excepciones: estos si se conservan =====
+!docs/*.png
