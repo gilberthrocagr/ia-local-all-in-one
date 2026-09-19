@@ -5,7 +5,22 @@ Instalado el 18-sep-2026. Todo en `C:\AI`, versionado en git y publicado en
 
 ---
 
-## Lo más fácil: la carpeta "IA Local" del escritorio
+## Lo más fácil: los accesos del escritorio
+
+Tienes cuatro accesos sueltos en el escritorio, agrupados por nombre:
+
+| Acceso | Para qué | Ojo |
+|---|---|---|
+| **IA - Todo en uno** | Chat + código + imágenes + vídeo (Goose Desktop) | Tu día a día |
+| **IA - Chat y documentos** | Open WebUI: PDFs, RAG, imágenes | Convive con lo demás |
+| **IA - Imagenes** | ComfyUI, control nodo a nodo | 14 s por imagen |
+| **IA - Video** | FramePack | **Cierra lo demás solo** |
+
+Para vídeo hay dos caminos: **IA - Video** va al doble de velocidad (10,5 min por
+segundo) pero cierra el chat; pedirlo desde **IA - Todo en uno** no cierra nada pero
+tarda 21,7 min por segundo. Para un clip de 4 s: 42 min contra 87.
+
+## Y la carpeta "IA Local" del escritorio
 
 Tienes accesos directos numerados. **Cada uno arranca solo lo que necesita** y abre el
 navegador cuando está listo. No tienes que acordarte de nada:
