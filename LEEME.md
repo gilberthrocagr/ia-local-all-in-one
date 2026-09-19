@@ -205,6 +205,41 @@ con el LLM cortándose, no el vídeo fallando. Goose se recupera solo.
 
 Config en: `%APPDATA%\Block\goose\config\config.yaml`
 
+### CRÍTICO: cada extensión de Goose cuesta MINUTOS por mensaje
+
+Cada extensión activa mete las definiciones de sus herramientas en el prompt del
+sistema **en cada mensaje**. Tu GPU procesa prompt a ~180 tok/s, así que un prompt
+grande se paga en tiempo antes de que el modelo escriba una sola palabra.
+
+Medido con la frase "hola estas aqui":
+
+| Extensiones activas | Tiempo en responder |
+|---|---|
+| Solo `developer` | **21,7 s** |
+| + `comfyui` + `framepack` | **249,4 s** |
+| + las 9 de plataforma | **314,3 s** |
+
+**`comfy-mcp` es el caro**: sus herramientas traen descripciones larguísimas.
+Tener imágenes y vídeo enchufados a Goose lo hace **11 veces más lento**.
+
+Por eso hay dos perfiles:
+
+```
+IA - Todo en uno              -> solo developer. Rapido (~20 s). Para programar.
+IA - Goose completo (lento)   -> + imagenes y video. Varios minutos por mensaje.
+```
+
+Se cambia con `goose-perfil.ps1 -Perfil codigo|completo`, que cierra Goose, ajusta el
+`config.yaml` y lo reabre.
+
+**Dos trampas del fichero de configuración**, las dos descubiertas rompiéndolo:
+
+1. `providers.openai.enabled` **no es una extensión**. Si se apaga por error, Goose
+   dice "No provider configured" y no conecta con nada.
+2. **El `config.yaml` no admite BOM.** `Set-Content -Encoding UTF8` de PowerShell 5.1
+   lo añade y Goose falla con el mismo mensaje confuso. Hay que escribirlo con
+   `UTF8Encoding($false)`.
+
 ### AVISO IMPORTANTE: el modelo se inventa verificaciones
 
 En esa primera prueba fallida, Qwen3.6 dijo *"¡Listo! La imagen fue generada
