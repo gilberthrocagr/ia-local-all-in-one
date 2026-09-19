@@ -240,6 +240,24 @@ Se cambia con `goose-perfil.ps1 -Perfil codigo|completo`, que cierra Goose, ajus
    lo añade y Goose falla con el mismo mensaje confuso. Hay que escribirlo con
    `UTF8Encoding($false)`.
 
+### Si pides algo que el perfil no puede hacer, el modelo improvisa
+
+Pasó de verdad: con el perfil **código** activo (sin la extensión de imágenes), se le
+pidió "un arcoíris sobre un río". El modelo no tiene herramienta para generar imágenes,
+así que **no avisó de que no podía**: se puso a escribir un programa en Python con PIL
+para dibujarlo a mano, píxel a píxel. Tardó minutos y el resultado no era una imagen
+generada por IA.
+
+**Cómo saber si está trabajando o colgado:** `monitor-goose.ps1` observa durante 3
+minutos si hay actividad de GPU, conexiones al puerto 8080 y peticiones nuevas en el
+log. Si hay actividad, el mensaje llegó y solo tarda; si no hay nada, el problema está
+en la aplicación.
+
+**Regla práctica: para imágenes no uses Goose.** Usa "IA - Imagenes" (ComfyUI, 14 s) o
+"IA - Chat y documentos" (Open WebUI, 23 s). El perfil completo de Goose puede generar
+imágenes de verdad, pero cobra 249 s en *cada* mensaje, también en los que no tienen
+nada que ver con imágenes.
+
 ### AVISO IMPORTANTE: el modelo se inventa verificaciones
 
 En esa primera prueba fallida, Qwen3.6 dijo *"¡Listo! La imagen fue generada
