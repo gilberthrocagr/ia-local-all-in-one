@@ -300,6 +300,37 @@ parando antes los servicios, y verifica que arrancan y que no aparecen ventanas.
 
 ---
 
+## Verificación: comprobar que todo funciona
+
+`probar-todo.ps1` prueba que los accesos **arrancan** (para los servicios antes de
+cada uno, para comprobar que lo hacen desde cero).
+
+Pero arrancar no es funcionar. La verificación **funcional** —que cada cosa haga su
+trabajo— se hizo con comandos sueltos, no con un script, por una razón:
+
+**Windows Defender bloquea los scripts .ps1 que combinan peticiones HTTP, arranque de
+procesos y escritura de ficheros.** Da el error "Este script contiene elementos
+malintencionados". Es un falso positivo, pero el antivirus está haciendo su trabajo:
+ese perfil se parece al de un script dañino. La solución fue ejecutar las pruebas
+como comandos independientes.
+
+Resultado de la última verificación funcional (6 de 6):
+
+| Componente | Qué demostró | Tiempo |
+|---|---|---|
+| Modelo (llama.cpp) | Respondió a una pregunta | 1,3 s |
+| ComfyUI | Generó un PNG de 1270 KB en disco | 24,2 s |
+| Open WebUI | Sirvió su interfaz (HTTP 200) | — |
+| Goose | Respondió como agente | 23,5 s |
+| Aider | **Editó un fichero**, comprobado leyéndolo | 42,2 s |
+| FramePack | Arrancó y su endpoint /process responde | 20 s |
+
+La prueba de Aider es la que más vale: no se fía de lo que diga el agente, **abre el
+fichero y comprueba que el cambio está**. Es la defensa contra que el modelo se
+invente verificaciones.
+
+---
+
 ## Dónde está cada cosa
 
 ```
