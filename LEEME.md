@@ -1,6 +1,7 @@
 # IA local en el ThinkPad P16v — guía de uso
 
-Instalado el 18-sep-2026. Todo en `C:\AI`. Hardware: RTX 1000 Ada (6 GB), 64 GB RAM DDR5-5600.
+Instalado el 18-sep-2026. Todo en `C:\AI`, versionado en git y publicado en
+**https://github.com/gilberthrocagr/ia-local-all-in-one** (MIT). Hardware: RTX 1000 Ada (6 GB), 64 GB RAM DDR5-5600.
 
 ---
 
