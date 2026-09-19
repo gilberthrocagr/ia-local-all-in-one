@@ -220,6 +220,33 @@ Por eso `GOOSE_MODE` está en `approve` y `auto-commits` de Aider en `false`.
 
 ---
 
+## Cómo arrancan las cosas (lanzadores)
+
+Los accesos directos **no** ejecutan los `.cmd` directamente: llaman a un `.vbs` que
+lanza `lanzador.ps1` **sin mostrar ninguna ventana de consola**.
+
+```
+acceso directo  ->  wscript  ->  ia-XXX.vbs  ->  lanzador.ps1 -App XXX
+```
+
+Eso resuelve dos problemas de la primera versión:
+
+1. Antes se veía **una ventana negra bloqueada 25 segundos** (`timeout /t 25`) y luego
+   quedaban ventanas abiertas. Ahora no se ve nada: los servidores arrancan minimizados.
+2. Antes se esperaba un tiempo fijo a ciegas. Ahora **se comprueba el puerto cada 0,8 s**
+   y el navegador se abre en cuanto el servicio responde de verdad, ni antes ni después.
+
+Si un servicio no arranca, sale un aviso diciendo qué `.cmd` ejecutar a mano para ver el error.
+
+**Los `.vbs` se generan con `generar-vbs.py`, no los edites a mano.** VBScript exige que
+las comillas dentro de un string vayan duplicadas (`""`), y escribirlas mal rompe el
+fichero sin avisar: el lanzador simplemente no hace nada.
+
+Para comprobar que todo sigue funcionando: `probar-lanzadores.ps1` prueba cada acceso
+parando antes los servicios, y verifica que arrancan y que no aparecen ventanas.
+
+---
+
 ## Dónde está cada cosa
 
 ```
