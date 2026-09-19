@@ -11,13 +11,13 @@ extensions:
     timeout: null
     bundled: true
   comfyui:
-    enabled: true
+    enabled: false
     type: stdio
     name: comfyui
-    cmd: C:\Users\<TU_USUARIO>\.local\bin\comfy-mcp.exe
+    cmd: C:\Users\gilbe\.local\bin\comfy-mcp.exe
     args: []
     envs:
-      COMFY_BIN: C:\Users\<TU_USUARIO>\AppData\Roaming\uv\tools\comfy-mcp\Scripts\comfy.exe
+      COMFY_BIN: C:\Users\gilbe\AppData\Roaming\uv\tools\comfy-mcp\Scripts\comfy.exe
       COMFY_HOST: 127.0.0.1
       COMFY_PORT: '8188'
       COMFY_T2I_TEMPLATE: image_z_image_turbo_int8
@@ -26,10 +26,10 @@ extensions:
     timeout: 600
     description: Genera imagenes con Z-Image en local. Usa SIEMPRE generate_image(prompt) con el texto del usuario; no uses run_template, que ejecuta prompts de ejemplo.
   framepack:
-    enabled: true
+    enabled: false
     type: stdio
     name: framepack
-    cmd: C:\Users\<TU_USUARIO>\AppData\Local\Microsoft\WinGet\Packages\astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe\uv.exe
+    cmd: C:\Users\gilbe\AppData\Local\Microsoft\WinGet\Packages\astral-sh.uv_Microsoft.Winget.Source_8wekyb3d8bbwe\uv.exe
     args:
       - run
       - --with
@@ -44,14 +44,14 @@ extensions:
     timeout: 3600
     description: Genera VIDEO a partir de una imagen con FramePack. MUY LENTO, unos 10,5 minutos por cada segundo de video. Llama antes a framepack_status y avisa al usuario del tiempo que va a tardar.
   tom:
-    enabled: true
+    enabled: false
     type: platform
     name: tom
     description: Inject custom context into every turn via GOOSE_MOIM_MESSAGE_TEXT and GOOSE_MOIM_MESSAGE_FILE environment variables
     display_name: Top Of Mind
     bundled: true
   extensionmanager:
-    enabled: true
+    enabled: false
     type: platform
     name: Extension Manager
     description: Enable extension management tools for discovering, enabling, and disabling extensions
@@ -72,28 +72,28 @@ extensions:
     display_name: Orchestrator
     bundled: true
   todo:
-    enabled: true
+    enabled: false
     type: platform
     name: todo
     description: Enable a todo list for goose so it can keep track of what it is doing
     display_name: Todo
     bundled: true
   skills:
-    enabled: true
+    enabled: false
     type: platform
     name: skills
     description: Discover and provide skill instructions from filesystem and builtins
     display_name: Skills
     bundled: true
   scheduler:
-    enabled: true
+    enabled: false
     type: platform
     name: scheduler
     description: Create and manage scheduled recipe execution
     display_name: Scheduler
     bundled: true
   summon:
-    enabled: true
+    enabled: false
     type: platform
     name: summon
     description: Load knowledge and delegate tasks to subagents
@@ -114,14 +114,14 @@ extensions:
     display_name: Code Mode
     bundled: true
   apps:
-    enabled: true
+    enabled: false
     type: platform
     name: apps
     description: Create and manage custom Goose apps through chat. Apps are HTML/CSS/JavaScript and run in sandboxed windows.
     display_name: Apps
     bundled: true
   analyze:
-    enabled: true
+    enabled: false
     type: platform
     name: analyze
     description: 'Analyze code structure with tree-sitter: directory overviews, file details, symbol call graphs'
