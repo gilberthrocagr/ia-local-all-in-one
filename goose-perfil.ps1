@@ -12,6 +12,8 @@
 # Uso:
 #   goose-perfil.ps1 -Perfil codigo    -> rapido, solo editar/ejecutar
 #   goose-perfil.ps1 -Perfil completo  -> lento, con imagenes y video
+# Con -Abrir (lo que usan los accesos) vuelve a abrir Goose Desktop cuando el
+# modelo ya responde.
 param(
     [Parameter(Mandatory=$true)]
     [ValidateSet('codigo','completo')]
@@ -61,33 +63,12 @@ if (-not $Abrir) { return }
 # IMPORTANTE: hay que arrancar el modelo ANTES de abrir Goose y ESPERAR a que
 # responda. Si no, la ventana abre en 4 segundos pero no hay nadie al otro lado:
 # escribes y no contesta, porque el modelo sigue cargando sus 22 GB.
-function Puerto-Abierto($p) {
-    return (Test-NetConnection -ComputerName '127.0.0.1' -Port $p -InformationLevel Quiet -WarningAction SilentlyContinue)
-}
-
-function Asegurar-Servicio($script, $puerto, $segundos) {
-    if (Puerto-Abierto $puerto) { return $true }
-    Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', $script -WindowStyle Minimized
-    $fin = (Get-Date).AddSeconds($segundos)
-    while ((Get-Date) -lt $fin) {
-        Start-Sleep -Seconds 2
-        if (Puerto-Abierto $puerto) { return $true }
-    }
-    return $false
-}
-
-$modeloListo = Asegurar-Servicio 'C:\AI\start-qwen.cmd' 8080 150
-if (-not $modeloListo) {
-    Add-Type -AssemblyName PresentationFramework
-    [System.Windows.MessageBox]::Show(
-        "El modelo no arranco en 2,5 minutos.`n`nAbre C:\AI\start-qwen.cmd a mano para ver el error.",
-        'IA - Goose') | Out-Null
-    return
-}
-
-# El perfil completo necesita ademas ComfyUI para generar imagenes
-if ($Perfil -eq 'completo') {
-    Asegurar-Servicio 'C:\AI\start-comfy.cmd' 8188 150 | Out-Null
-}
-
-Start-Process 'C:\AI\GooseDesktop\Goose.exe'
+#
+# De eso se encarga lanzador.ps1: arranca el modelo, espera a que /health
+# devuelva 200 (el puerto se abre antes de que termine de cargar), arranca
+# ComfyUI si el perfil es el completo y abre Goose Desktop.
+# Va en otro fichero a proposito: Windows Defender bloquea los .ps1 que juntan
+# peticiones HTTP, arranque de procesos y escritura de ficheros, y este ya
+# escribe el config.yaml. Asi ninguno de los dos tiene las tres cosas.
+$app = if ($Perfil -eq 'completo') { 'goose-completo' } else { 'goose-codigo' }
+& 'C:\AI\lanzador.ps1' -App $app
