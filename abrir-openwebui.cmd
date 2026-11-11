@@ -1,16 +1,10 @@
 @echo off
 title Abriendo Open WebUI...
-tasklist /FI "IMAGENAME eq llama-server.exe" 2>NUL | find /I "llama-server.exe" >NUL
-if errorlevel 1 (
-  echo Arrancando Qwen3.6, espera unos 20 segundos...
-  start "Servidor Qwen3.6 - NO CERRAR" cmd /c C:\AI\start-qwen.cmd
-  timeout /t 20 /nobreak >NUL
-)
-tasklist /FI "IMAGENAME eq open-webui.exe" 2>NUL | find /I "open-webui.exe" >NUL
-if errorlevel 1 (
-  echo Arrancando Open WebUI, espera unos 30 segundos...
-  start "Open WebUI - NO CERRAR" cmd /c C:\AI\start-openwebui.cmd
-  timeout /t 30 /nobreak >NUL
-)
-start http://127.0.0.1:3000
+REM Hace lo mismo que el acceso "1 - Chat unificado": lanzador.ps1 arranca lo que haga
+REM falta y espera a que el modelo responda (/health) antes de abrir nada.
+REM Antes esperaba 20 s a ciegas y a veces abria antes de que el modelo cargara.
+REM Tambien arranca ComfyUI, para que funcionen las imagenes dentro de Open WebUI.
+echo Arrancando Qwen3.6, ComfyUI y Open WebUI. El navegador se abrira cuando
+echo todo responda. La primera vez puede tardar unos minutos...
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\AI\lanzador.ps1" -App openwebui
 exit

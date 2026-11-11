@@ -22,7 +22,14 @@ param(
 )
 
 $cfg = "$env:APPDATA\Block\goose\config\config.yaml"
-if (-not (Test-Path $cfg)) { Write-Error "No existe $cfg"; exit 1 }
+if (-not (Test-Path $cfg)) {
+    # Desde los accesos (-Abrir) la consola esta oculta y el error no se veria
+    if ($Abrir) {
+        Add-Type -AssemblyName PresentationFramework
+        [System.Windows.MessageBox]::Show("No existe la configuracion de Goose:`n$cfg`n`nCopia alli C:\AI\configs\goose-config.yaml (ver INSTALAR.md, paso de Goose).", 'IA - Goose') | Out-Null
+    }
+    Write-Error "No existe $cfg"; exit 1
+}
 
 # Goose reescribe el fichero al cerrarse; hay que cerrarlo antes de tocarlo
 Get-Process Goose -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue

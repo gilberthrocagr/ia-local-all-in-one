@@ -108,7 +108,7 @@ switch ($App) {
     }
 
     'aider' {
-        Iniciar-Modelo | Out-Null
+        if (-not (Iniciar-Modelo)) { Aviso $noArranco 'IA - Programar (Aider)'; break }
         Start-Process 'cmd.exe' -ArgumentList '/k', 'echo Estas listo para usar Aider. Ve a tu proyecto con: cd C:\ruta\del\proyecto  y ejecuta: C:\AI\aider-qwen.cmd'
     }
 

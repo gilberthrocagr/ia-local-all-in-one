@@ -3,6 +3,7 @@
 $desk = [Environment]::GetFolderPath('Desktop')
 $carpeta = Join-Path $desk 'IA Local'
 $ws = New-Object -ComObject WScript.Shell
+$ProgressPreference = 'SilentlyContinue'
 
 function Test-Puerto($p) {
     try {
@@ -11,6 +12,14 @@ function Test-Puerto($p) {
         $ok = $r.AsyncWaitHandle.WaitOne(700, $false)
         if ($ok) { $c.EndConnect($r) }
         $c.Close(); return $ok
+    } catch { return $false }
+}
+
+# Como en lanzador.ps1: el modelo esta listo cuando /health devuelve 200
+function Test-Salud($url) {
+    try {
+        $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop
+        return ($r.StatusCode -eq 200)
     } catch { return $false }
 }
 
@@ -39,8 +48,10 @@ function Contar-ConsolaAider {
 $resultados = @()
 
 # $puerto > 0: basta con que el puerto acepte conexiones.
+# $url: OK solo cuando esa URL devuelve 200 (manda sobre $puerto). Para el
+#   modelo no basta el puerto: llama-server abre el 8080 antes de cargar.
 # $detector: bloque que cuenta lo abierto; OK cuando hay mas que al empezar.
-function Probar($lnk, $puerto, $maxSeg, $detector) {
+function Probar($lnk, $puerto, $maxSeg, $detector, $url) {
     $nombre = [IO.Path]::GetFileNameWithoutExtension($lnk)
     Write-Output ""
     Write-Output "--- $nombre ---"
@@ -64,7 +75,8 @@ function Probar($lnk, $puerto, $maxSeg, $detector) {
     $ok = $false
     for ($i = 0; $i -lt ($maxSeg / 2); $i++) {
         Start-Sleep -Seconds 2
-        if ($puerto -gt 0 -and (Test-Puerto $puerto)) { $ok = $true; break }
+        if ($url) { if (Test-Salud $url) { $ok = $true; break } }
+        elseif ($puerto -gt 0 -and (Test-Puerto $puerto)) { $ok = $true; break }
         if ($detector -and ((& $detector) -gt $antes)) { $ok = $true; break }
     }
     $seg = [math]::Round(((Get-Date) - $t0).TotalSeconds, 0)
@@ -77,7 +89,7 @@ Write-Output "  PRUEBA DE TODOS LOS ACCESOS DE 'IA Local'"
 Write-Output "================================================"
 
 Parar-Todo
-Probar '2 - Chat simple (llama.cpp).lnk'      8080 120 $null
+Probar '2 - Chat simple (llama.cpp).lnk'      8080 200 $null 'http://127.0.0.1:8080/health'
 Parar-Todo
 Probar '5 - Imagenes (ComfyUI).lnk'           8188 150 $null
 Parar-Todo

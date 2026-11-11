@@ -14,7 +14,7 @@ REM --no-mmap --mlock ya no existen; su equivalente es --load-mode mlock.
 REM En CUDA 13.x las DLLs de runtime estan en bin\x64, no en bin.
 REM
 REM Si quieres volver al modelo sin MTP (950 MB menos de VRAM), cambia
-REM MODEL por Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf y quita las dos lineas --spec-*
+REM MODEL por Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf y quita la linea de las opciones --spec-*
 setlocal
 
 set "PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.2\bin\x64;%PATH%"

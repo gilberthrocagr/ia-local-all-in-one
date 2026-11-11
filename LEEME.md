@@ -11,11 +11,12 @@ Instalado el 18-sep-2026. Todo en `C:\AI`, versionado en git y publicado en
 
 ## Lo más fácil: los accesos del escritorio
 
-Tienes cuatro accesos sueltos en el escritorio, agrupados por nombre:
+Tienes cinco accesos sueltos en el escritorio, agrupados por nombre:
 
 | Acceso | Para qué | Ojo |
 |---|---|---|
 | **IA - Todo en uno** | Chat + código con Goose Desktop (perfil ligero: sin imágenes ni vídeo) | Tu día a día |
+| **IA - Goose completo (lento)** | Goose Desktop con imágenes y vídeo (perfil completo) | **Minutos por mensaje** |
 | **IA - Chat y documentos** | Open WebUI: PDFs, RAG, imágenes | Convive con lo demás |
 | **IA - Imagenes** | ComfyUI, control nodo a nodo | 14 s por imagen |
 | **IA - Video** | FramePack | **Cierra lo demás solo** |
@@ -39,8 +40,8 @@ navegador cuando está listo. No tienes que acordarte de nada:
 | **2 - Chat simple (llama.cpp)** | Chat directo, más ligero |
 | **3 - Programar (Aider)** | Terminal lista para programar |
 | **4 - Agente (Goose)** | El mismo Goose, pero en terminal |
-| **5 - Imágenes (ComfyUI)** | Z-Image, control total del flujo |
-| **6 - Vídeo (FramePack)** | Su propia ventana. El doble de rápido que por Goose |
+| **5 - Imagenes (ComfyUI)** | Z-Image, control total del flujo |
+| **6 - Video (FramePack)** | Su propia ventana. El doble de rápido que por Goose |
 
 **Para el día a día usa el 0.** Los demás son para cuando quieras control fino
 (ComfyUI), documentos y RAG (Open WebUI) o vídeo a máxima velocidad (FramePack).
@@ -49,13 +50,16 @@ navegador cuando está listo. No tienes que acordarte de nada:
 
 | Quiero... | Arranco | Y uso |
 |---|---|---|
-| **Chat + imágenes + documentos** (Open WebUI) | `C:\AI\abrir-openwebui.cmd` (y `start-comfy.cmd` para las imágenes) | http://127.0.0.1:3000 |
+| **Chat + imágenes + documentos** (Open WebUI) | `C:\AI\abrir-openwebui.cmd` (arranca también ComfyUI para las imágenes) | http://127.0.0.1:3000 |
 | **Goose Desktop** | `C:\AI\abrir-goose-desktop.cmd` | Su ventana |
 | **Programar** (prioridad 1) | `C:\AI\start-qwen.cmd` | `C:\AI\aider-qwen.cmd` en tu proyecto |
 | **Un agente** (prioridad 2) | `C:\AI\start-qwen.cmd` | `C:\AI\goose-qwen.cmd session` |
 | **Chatear** (prioridad 3) | `C:\AI\start-qwen.cmd` | Navegador → http://127.0.0.1:8080 |
 | **Imágenes** (prioridad 4) | `C:\AI\start-comfy.cmd` | Navegador → http://127.0.0.1:8188 |
 | **Vídeo** | `C:\AI\start-framepack.cmd` | Navegador → http://127.0.0.1:7860 |
+
+Los `abrir-*.cmd` hacen lo mismo que los accesos directos: esperan a que el modelo
+responda antes de abrir el navegador o la aplicación.
 
 **`start-qwen.cmd` es la base de casi todo.** Déjalo corriendo en una ventana y olvídate.
 
@@ -163,15 +167,17 @@ C:\AI\abrir-openwebui.cmd
 ```
 → http://127.0.0.1:3000
 
-Arranca solo el LLM si hace falta. Te da en una interfaz tipo ChatGPT:
+Arranca el LLM y ComfyUI si hace falta, espera a que el modelo responda y abre el
+navegador. Te da en una interfaz tipo ChatGPT:
 - **Chat** con Qwen3.6
 - **Imágenes**: pide una imagen en el chat y la genera con tu Z-Image por detrás
   (ya configurado: 1024x1024, 8 pasos. **Medido: 23 s por imagen**)
 - **Documentos**: sube PDFs y pregunta sobre ellos
 - **Búsqueda web**
 
-Para que las imágenes funcionen, **ComfyUI tiene que estar corriendo** (arráncalo con el
-acceso directo 5 o `start-comfy.cmd`).
+Para que las imágenes funcionen, **ComfyUI tiene que estar corriendo**: `abrir-openwebui.cmd`
+y el acceso 1 lo arrancan solos. Si abres Open WebUI de otra forma, arráncalo antes con el
+acceso directo 5 o `start-comfy.cmd`.
 
 Notas:
 - Entra sin pedir contraseña (`WEBUI_AUTH=False`) y solo escucha en `127.0.0.1`.
@@ -191,7 +197,8 @@ C:\AI\abrir-goose-desktop.cmd
 ```
 (o el acceso directo **"0 - TODO EN UNO"** del escritorio)
 
-Arranca por su cuenta el LLM y ComfyUI, y abre la GUI. Es lo más parecido a Claude Code
+Arranca por su cuenta el LLM y ComfyUI, y abre la GUI cuando el modelo ya responde.
+Es lo más parecido a Claude Code
 en local: le hablas normal y él edita ficheros y ejecuta comandos. **Imágenes y vídeo
 solo con el perfil completo**: la plantilla `configs/goose-config.yaml` y el acceso
 «IA - Todo en uno» usan el ligero, solo `developer` (ver «CRÍTICO» más abajo).
@@ -426,8 +433,8 @@ con contexto vacío: `bench-mtp.ps1` hace 3 peticiones de 250 tokens con un prom
 
 Se deja activado porque en el peor caso empata y en el mejor gana, y los 950 MB extra de
 VRAM no dan problemas de convivencia con ComfyUI. **Si alguna vez necesitas esos 950 MB**,
-quítalo sin dudarlo: cambia el `MODEL` en `start-qwen.cmd` al fichero sin MTP y borra las
-dos líneas `--spec-*`.
+quítalo sin dudarlo: cambia el `MODEL` en `start-qwen.cmd` al fichero sin MTP y borra la
+línea de las opciones `--spec-*`.
 
 Nota: con MTP la velocidad varía más entre peticiones (dispersión del 9%); sin MTP era
 clavada (1%). Es normal, depende de cuántos tokens propuestos acierta el predictor.
@@ -520,7 +527,8 @@ repo** y **código que mueva dinero**.
 El servidor arranca **sin API key y con CORS abierto**. Solo escucha en `127.0.0.1`, así que
 desde la red no se llega — pero cualquier web que abras en el navegador podría hacerle
 peticiones. Si quieres cerrarlo, añade `--api-key TU_CLAVE` en `start-qwen.cmd` y la misma
-clave en `aider-qwen.cmd` y `goose-qwen.cmd`.
+clave en `aider-qwen.cmd`, `goose-qwen.cmd`, `start-openwebui.cmd` y en la configuración
+de Goose Desktop.
 
 ## Sobre el Sysmem Fallback (decidido: no hace falta)
 
