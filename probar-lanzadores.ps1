@@ -1,6 +1,6 @@
-# Prueba cada acceso directo como lo usaria una persona: doble clic.
-# Verifica que el servicio arranca, que no aparecen ventanas de consola,
-# y cuanto tarda.
+# Prueba los tres accesos sueltos del escritorio como lo haria una persona:
+# doble clic. Verifica que el servicio arranca y cuanto tarda, y cuenta las
+# consolas nuevas. Si alguno falla, el resumen lo dice.
 $desk = [Environment]::GetFolderPath('Desktop')
 $ws = New-Object -ComObject WScript.Shell
 
@@ -22,15 +22,24 @@ function Parar-Todo {
     Start-Sleep -Seconds 4
 }
 
+# Los mensajes van con Write-Host a proposito: lo que sale con Write-Output
+# dentro de una funcion forma parte de lo que devuelve. Antes $resultados
+# guardaba una lista de textos, que PowerShell da siempre por verdadera, y el
+# resumen salia OK aunque el acceso ni existiera.
 function Probar($nombre, $lnk, $puerto, $maxSeg, $procesoExtra) {
-    Write-Output ""
-    Write-Output "--- $nombre ---"
+    Write-Host ""
+    Write-Host "--- $nombre ---"
     $ruta = Join-Path $desk $lnk
-    if (-not (Test-Path $ruta)) { Write-Output "  FALLO: no existe el acceso directo"; return $false }
+    if (-not (Test-Path $ruta)) { Write-Host "  FALLO: no existe el acceso directo $ruta"; return $false }
 
     $cmdAntes = (Get-Process cmd -EA SilentlyContinue | Measure-Object).Count
     $l = $ws.CreateShortcut($ruta)
-    Start-Process -FilePath $l.TargetPath -ArgumentList $l.Arguments -WorkingDirectory $l.WorkingDirectory
+    # Un acceso que apunta directamente al .vbs no tiene argumentos, y
+    # Start-Process no acepta -ArgumentList vacio
+    $sp = @{ FilePath = $l.TargetPath }
+    if ($l.Arguments) { $sp.ArgumentList = $l.Arguments }
+    if ($l.WorkingDirectory) { $sp.WorkingDirectory = $l.WorkingDirectory }
+    Start-Process @sp
 
     $t0 = Get-Date
     $ok = $false
@@ -43,9 +52,11 @@ function Probar($nombre, $lnk, $puerto, $maxSeg, $procesoExtra) {
     $cmdDespues = (Get-Process cmd -EA SilentlyContinue | Measure-Object).Count
     $ventanasNuevas = $cmdDespues - $cmdAntes
 
-    if ($ok) { Write-Output "  OK      arranco en $seg s" }
-    else     { Write-Output "  FALLO   no arranco en $seg s" }
-    Write-Output "  ventanas de consola nuevas: $ventanasNuevas  $(if($ventanasNuevas -le 0){'(bien: ninguna visible)'}else{'(REVISAR)'})"
+    if ($ok) { Write-Host "  OK      arranco en $seg s" }
+    else     { Write-Host "  FALLO   no arranco en $seg s" }
+    # Solo informativo: cada servidor corre en su consola minimizada, asi que
+    # lo normal es una por servicio arrancado. Mira si alguna quedo delante.
+    Write-Host "  procesos cmd nuevos: $ventanasNuevas (los servidores van en consolas minimizadas)"
     return $ok
 }
 

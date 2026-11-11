@@ -20,9 +20,27 @@ function Parar-Todo {
     Start-Sleep -Seconds 4
 }
 
+# Detectores: cuentan lo que tiene que abrir cada acceso. No vale contar
+# procesos cmd: el lanzador abre antes start-qwen.cmd en una consola
+# minimizada, y eso daba OK aunque Goose o Aider no llegaran a abrir.
+function Contar-GooseDesktop {
+    return @(Get-Process goose -EA SilentlyContinue | Where-Object { $_.Path -like '*\GooseDesktop\*' }).Count
+}
+function Contar-GooseCli {
+    # El goose.exe del CLI, no el Goose.exe de Goose Desktop
+    return @(Get-Process goose -EA SilentlyContinue | Where-Object { $_.Path -like '*\goose-package\*' }).Count
+}
+function Contar-ConsolaAider {
+    # La consola que abre 'lanzador.ps1 -App aider' lleva aider-qwen.cmd en su linea de comandos
+    return @(Get-CimInstance Win32_Process -Filter "Name = 'cmd.exe'" -EA SilentlyContinue |
+        Where-Object { $_.CommandLine -like '*aider-qwen.cmd*' }).Count
+}
+
 $resultados = @()
 
-function Probar($lnk, $puerto, $proceso, $maxSeg, $esperaVentanaCmd) {
+# $puerto > 0: basta con que el puerto acepte conexiones.
+# $detector: bloque que cuenta lo abierto; OK cuando hay mas que al empezar.
+function Probar($lnk, $puerto, $maxSeg, $detector) {
     $nombre = [IO.Path]::GetFileNameWithoutExtension($lnk)
     Write-Output ""
     Write-Output "--- $nombre ---"
@@ -32,20 +50,22 @@ function Probar($lnk, $puerto, $proceso, $maxSeg, $esperaVentanaCmd) {
         $script:resultados += [PSCustomObject]@{ Acceso=$nombre; Resultado='NO EXISTE' }
         return
     }
-    $cmdAntes = (Get-Process cmd -EA SilentlyContinue | Measure-Object).Count
+    $antes = 0
+    if ($detector) { $antes = & $detector }
     $l = $ws.CreateShortcut($ruta)
-    Start-Process -FilePath $l.TargetPath -ArgumentList $l.Arguments -WorkingDirectory $l.WorkingDirectory
+    # Un acceso que apunta directamente al .vbs no tiene argumentos, y
+    # Start-Process no acepta -ArgumentList vacio
+    $sp = @{ FilePath = $l.TargetPath }
+    if ($l.Arguments) { $sp.ArgumentList = $l.Arguments }
+    if ($l.WorkingDirectory) { $sp.WorkingDirectory = $l.WorkingDirectory }
+    Start-Process @sp
 
     $t0 = Get-Date
     $ok = $false
     for ($i = 0; $i -lt ($maxSeg / 2); $i++) {
         Start-Sleep -Seconds 2
         if ($puerto -gt 0 -and (Test-Puerto $puerto)) { $ok = $true; break }
-        if ($proceso -and (Get-Process $proceso -EA SilentlyContinue)) { $ok = $true; break }
-        if ($esperaVentanaCmd) {
-            $ahora = (Get-Process cmd -EA SilentlyContinue | Measure-Object).Count
-            if ($ahora -gt $cmdAntes) { $ok = $true; break }
-        }
+        if ($detector -and ((& $detector) -gt $antes)) { $ok = $true; break }
     }
     $seg = [math]::Round(((Get-Date) - $t0).TotalSeconds, 0)
     if ($ok) { Write-Output "  OK      arranco en $seg s" } else { Write-Output "  FALLO   no arranco en $seg s" }
@@ -57,17 +77,17 @@ Write-Output "  PRUEBA DE TODOS LOS ACCESOS DE 'IA Local'"
 Write-Output "================================================"
 
 Parar-Todo
-Probar '2 - Chat simple (llama.cpp).lnk'      8080 $null 120 $false
+Probar '2 - Chat simple (llama.cpp).lnk'      8080 120 $null
 Parar-Todo
-Probar '5 - Imagenes (ComfyUI).lnk'           8188 $null 150 $false
+Probar '5 - Imagenes (ComfyUI).lnk'           8188 150 $null
 Parar-Todo
-Probar '1 - Chat unificado (Open WebUI).lnk'  3000 $null 240 $false
+Probar '1 - Chat unificado (Open WebUI).lnk'  3000 240 $null
 Parar-Todo
-Probar '0 - TODO EN UNO (Goose Desktop).lnk'  0 'Goose' 180 $false
+Probar '0 - TODO EN UNO (Goose Desktop).lnk'  0    240 { Contar-GooseDesktop }
 Parar-Todo
-Probar '4 - Agente (Goose).lnk'               0 $null 150 $true
+Probar '4 - Agente (Goose).lnk'               0    240 { Contar-GooseCli }
 Parar-Todo
-Probar '3 - Programar (Aider).lnk'            0 $null 150 $true
+Probar '3 - Programar (Aider).lnk'            0    240 { Contar-ConsolaAider }
 
 Write-Output ""
 Write-Output "================================================"
@@ -80,3 +100,4 @@ Write-Output ""
 Write-Output "NOTA: '6 - Video' no se prueba automaticamente porque muestra un"
 Write-Output "dialogo de confirmacion (cierra el resto de servicios) que hay que"
 Write-Output "aceptar a mano. Su lanzador tiene la misma estructura que los demas."
+Write-Output "La consola de Aider que abre la prueba se queda abierta: cierrala a mano."
