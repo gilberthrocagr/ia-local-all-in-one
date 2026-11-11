@@ -10,6 +10,10 @@ set "ENABLE_OLLAMA_API=False"
 set "WEBUI_AUTH=False"
 set "HOST=127.0.0.1"
 set "PORT=3000"
+REM Open WebUI guarda su clave (.webui_secret_key) en la carpeta desde la que
+REM arranca. Se arranca desde DATA_DIR para que quede ahi, fuera de git.
+if not exist "%DATA_DIR%" mkdir "%DATA_DIR%"
+cd /d "%DATA_DIR%"
 title Open WebUI
 "%USERPROFILE%\.local\bin\open-webui.exe" serve --host 127.0.0.1 --port 3000
 pause
