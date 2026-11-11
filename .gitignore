@@ -7,10 +7,25 @@ FramePack/
 GooseDesktop/
 llama.cpp/
 openwebui-data/
+*.gguf
+*.safetensors
+
+# ===== Secretos y datos locales =====
+# Open WebUI crea su clave en la carpeta desde la que arranca
+.webui_secret_key
+.env
+.venv/
+# Aider: historial de chat, de entrada y cache del mapa del repo.
+# No vale '.aider*': taparia .aider.conf.yml y .aider.model.metadata.json
+.aider.chat.history.md
+.aider.input.history
+.aider.llm.history
+.aider.tags.cache.v*/
 
 # ===== Salidas y temporales =====
 __pycache__/
 *.pyc
+*.log
 *.mp4
 *.png
 *.jpg
