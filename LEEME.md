@@ -1,5 +1,9 @@
 # IA local en el ThinkPad P16v — guía de uso
 
+> **Esta guía describe la instalación del autor**: sus rutas, sus accesos del escritorio
+> y las medidas en su portátil. Para montarlo en otra máquina, sigue
+> **[INSTALAR.md](INSTALAR.md)**.
+
 Instalado el 18-sep-2026. Todo en `C:\AI`, versionado en git y publicado en
 **https://github.com/gilberthrocagr/ia-local-all-in-one** (MIT). Hardware: RTX 1000 Ada (6 GB), 64 GB RAM DDR5-5600.
 
@@ -11,13 +15,16 @@ Tienes cuatro accesos sueltos en el escritorio, agrupados por nombre:
 
 | Acceso | Para qué | Ojo |
 |---|---|---|
-| **IA - Todo en uno** | Chat + código + imágenes + vídeo (Goose Desktop) | Tu día a día |
+| **IA - Todo en uno** | Chat + código con Goose Desktop (perfil ligero: sin imágenes ni vídeo) | Tu día a día |
 | **IA - Chat y documentos** | Open WebUI: PDFs, RAG, imágenes | Convive con lo demás |
 | **IA - Imagenes** | ComfyUI, control nodo a nodo | 14 s por imagen |
 | **IA - Video** | FramePack | **Cierra lo demás solo** |
 
+Goose con imágenes y vídeo es el perfil completo (**IA - Goose completo (lento)**,
+ver «CRÍTICO» más abajo): cada mensaje tarda minutos.
+
 Para vídeo hay dos caminos: **IA - Video** va al doble de velocidad (10,5 min por
-segundo) pero cierra el chat; pedirlo desde **IA - Todo en uno** no cierra nada pero
+segundo) pero cierra el chat; pedirlo a Goose con el perfil completo no cierra nada pero
 tarda 21,7 min por segundo. Para un clip de 4 s: 42 min contra 87.
 
 ## Y la carpeta "IA Local" del escritorio
@@ -27,7 +34,7 @@ navegador cuando está listo. No tienes que acordarte de nada:
 
 | Acceso directo | Para qué |
 |---|---|
-| **0 - TODO EN UNO (Goose Desktop)** | **Chat + código + imágenes + vídeo en una ventana** |
+| **0 - TODO EN UNO (Goose Desktop)** | **Chat + código en una ventana**. Abre Goose con el perfil que tenga activo: imágenes y vídeo solo con el completo |
 | **1 - Chat unificado (Open WebUI)** | Chat + imágenes + documentos. Mejor para PDFs y RAG |
 | **2 - Chat simple (llama.cpp)** | Chat directo, más ligero |
 | **3 - Programar (Aider)** | Terminal lista para programar |
@@ -42,7 +49,8 @@ navegador cuando está listo. No tienes que acordarte de nada:
 
 | Quiero... | Arranco | Y uso |
 |---|---|---|
-| **Todo en uno** | `C:\AI\abrir-openwebui.cmd` | http://127.0.0.1:3000 |
+| **Chat + imágenes + documentos** (Open WebUI) | `C:\AI\abrir-openwebui.cmd` (y `start-comfy.cmd` para las imágenes) | http://127.0.0.1:3000 |
+| **Goose Desktop** | `C:\AI\abrir-goose-desktop.cmd` | Su ventana |
 | **Programar** (prioridad 1) | `C:\AI\start-qwen.cmd` | `C:\AI\aider-qwen.cmd` en tu proyecto |
 | **Un agente** (prioridad 2) | `C:\AI\start-qwen.cmd` | `C:\AI\goose-qwen.cmd session` |
 | **Chatear** (prioridad 3) | `C:\AI\start-qwen.cmd` | Navegador → http://127.0.0.1:8080 |
@@ -59,8 +67,8 @@ Solo tienes 6 GB. Medido en esta máquina:
 
 | Combinación | ¿Funciona? |
 |---|---|
-| llama-server solo | ✅ 3481 MiB |
-| llama-server + ComfyUI | ✅ pico 5762 MiB (94%, va justo) |
+| llama-server solo | ✅ 4500 MiB con MTP (3554 sin MTP; ver el barrido de MTP) |
+| llama-server + ComfyUI | ✅ pico 5780 MiB (94%, va justo; ver «Sobre el Sysmem Fallback») |
 | **FramePack** | ❌ **necesita la GPU para él solo** |
 
 Antes de usar FramePack, cierra las ventanas de llama-server y ComfyUI.
@@ -81,7 +89,7 @@ Dentro de Aider:
 - `/diff` — ve qué cambió
 - `/help` — el resto
 
-**`auto-commits` está desactivado a propósito.** Aider modifica los ficheros pero NO hace commit: revisas con `git diff` y commiteas tú. Lo dejé así porque esta máquina toca producción.
+**`auto-commits` está desactivado a propósito.** Aider modifica los ficheros pero NO hace commit: revisas con `git diff` y commiteas tú. Lo dejé así para revisar cada cambio antes de que entre en el historial.
 
 Tarea simple medida: **51 s**, 2,7k tokens enviados.
 
@@ -168,13 +176,15 @@ acceso directo 5 o `start-comfy.cmd`).
 Notas:
 - Entra sin pedir contraseña (`WEBUI_AUTH=False`) y solo escucha en `127.0.0.1`.
   Si prefieres que pida login, quita esa línea de `start-openwebui.cmd`.
+- Su clave interna (`.webui_secret_key`) queda en `C:\AI\openwebui-data`, que no va a
+  git: `start-openwebui.cmd` arranca desde esa carpeta.
 - Su licencia **no es open source estándar**: prohíbe alterar su branding, salvo en
   despliegues de ≤50 usuarios. Siendo tú solo, estás cubierto.
 - Lo que **no** integra: el vídeo. FramePack sigue aparte en su 7860.
 
 ---
 
-## 7. Goose Desktop — chat + código + imágenes en una ventana
+## 7. Goose Desktop — chat + código (e imágenes y vídeo con el perfil completo)
 
 ```
 C:\AI\abrir-goose-desktop.cmd
@@ -182,7 +192,9 @@ C:\AI\abrir-goose-desktop.cmd
 (o el acceso directo **"0 - TODO EN UNO"** del escritorio)
 
 Arranca por su cuenta el LLM y ComfyUI, y abre la GUI. Es lo más parecido a Claude Code
-en local: le hablas normal y él edita ficheros, ejecuta comandos y genera imágenes.
+en local: le hablas normal y él edita ficheros y ejecuta comandos. **Imágenes y vídeo
+solo con el perfil completo**: la plantilla `configs/goose-config.yaml` y el acceso
+«IA - Todo en uno» usan el ligero, solo `developer` (ver «CRÍTICO» más abajo).
 
 Va en modo **`approve`**: pide permiso antes de ejecutar nada. No lo cambies a `auto`
 sin pensarlo — lee el aviso de abajo.
@@ -229,8 +241,9 @@ IA - Todo en uno              -> solo developer. Rapido (~20 s). Para programar.
 IA - Goose completo (lento)   -> + imagenes y video. Varios minutos por mensaje.
 ```
 
-Se cambia con `goose-perfil.ps1 -Perfil codigo|completo`, que cierra Goose, ajusta el
-`config.yaml` y lo reabre.
+Se cambia con `goose-perfil.ps1 -Perfil codigo|completo`, que cierra Goose y ajusta el
+`config.yaml`. Con `-Abrir`, que es lo que usan los accesos, además lo vuelve a abrir
+cuando el modelo ya responde (en el completo, arrancando también ComfyUI).
 
 **Dos trampas del fichero de configuración**, las dos descubiertas rompiéndolo:
 
@@ -282,28 +295,38 @@ lanza `lanzador.ps1` **sin mostrar ninguna ventana de consola**.
 acceso directo  ->  wscript  ->  ia-XXX.vbs  ->  lanzador.ps1 -App XXX
 ```
 
-Eso resuelve dos problemas de la primera versión:
+(Los dos de perfil de Goose, `ia-goose-codigo.vbs` e `ia-goose-completo.vbs`, pasan
+antes por `goose-perfil.ps1`, que cambia el `config.yaml` y luego llama a `lanzador.ps1`.)
+
+Eso resuelve dos problemas de la primera versión (los `abrir-*.cmd`, que siguen ahí):
 
 1. Antes se veía **una ventana negra bloqueada 25 segundos** (`timeout /t 25`) y luego
-   quedaban ventanas abiertas. Ahora no se ve nada: los servidores arrancan minimizados.
-2. Antes se esperaba un tiempo fijo a ciegas. Ahora **se comprueba el puerto cada 0,8 s**
-   y el navegador se abre en cuanto el servicio responde de verdad, ni antes ni después.
+   quedaban ventanas abiertas. Ahora no queda nada delante: los servidores arrancan en
+   consolas minimizadas.
+2. Antes se esperaba un tiempo fijo a ciegas. Ahora **se comprueba cada 0,8 s si el
+   servicio responde** y el navegador se abre en cuanto lo hace, ni antes ni después.
+   Para el modelo, eso es que `http://127.0.0.1:8080/health` devuelva 200: llama-server
+   abre el puerto antes de cargar sus 22 GB y mientras tanto contesta 503. Para ComfyUI,
+   Open WebUI y FramePack basta con que el puerto acepte conexiones.
 
 Si un servicio no arranca, sale un aviso diciendo qué `.cmd` ejecutar a mano para ver el error.
 
-**Los `.vbs` se generan con `generar-vbs.py`, no los edites a mano.** VBScript exige que
+**Los nueve `.vbs` se generan con `generar-vbs.py`, no los edites a mano.** VBScript exige que
 las comillas dentro de un string vayan duplicadas (`""`), y escribirlas mal rompe el
 fichero sin avisar: el lanzador simplemente no hace nada.
 
-Para comprobar que todo sigue funcionando: `probar-lanzadores.ps1` prueba cada acceso
-parando antes los servicios, y verifica que arrancan y que no aparecen ventanas.
+Para comprobar que todo sigue funcionando: `probar-lanzadores.ps1` prueba los tres
+accesos sueltos parando antes los servicios, verifica que arrancan y cuenta las consolas
+nuevas; si alguno falla, el resumen lo dice.
 
 ---
 
 ## Verificación: comprobar que todo funciona
 
 `probar-todo.ps1` prueba que los accesos **arrancan** (para los servicios antes de
-cada uno, para comprobar que lo hacen desde cero).
+cada uno, para comprobar que lo hacen desde cero). Con Goose y Aider comprueba que se
+abre su propio proceso o su consola, no una consola cualquiera: el lanzador abre antes la
+del modelo, y contar consolas daba OK aunque Goose o Aider no llegaran a abrir.
 
 Pero arrancar no es funcionar. La verificación **funcional** —que cada cosa haga su
 trabajo— se hizo con comandos sueltos, no con un script, por una razón:
@@ -360,7 +383,7 @@ actualizar ComfyUI sin perder 11 GB de descargas. ComfyUI los encuentra por
 
 | Qué | Resultado |
 |---|---|
-| **Generación con MTP (configuración actual)** | **35-37 tok/s** |
+| **Generación con MTP (configuración actual)** | **35-37 tok/s** con contexto corto (~25 tok/s con 16-32K, ver abajo) |
 | Generación sin MTP | 28,20 tok/s |
 | Generación, 16K de contexto (sin MTP) | 24,44 tok/s |
 | Procesado de prompt | 155 tok/s |
@@ -397,6 +420,10 @@ medición (solo 2 muestras y mucha dispersión). O sea: **programando con Aider,
 contexto va lleno, MTP no te aporta nada.** El +21% solo se nota en respuestas cortas:
 chat diario, preguntas sueltas.
 
+El +29,8% del barrido y este +21% son dos mediciones distintas de la misma configuración
+con contexto vacío: `bench-mtp.ps1` hace 3 peticiones de 250 tokens con un prompt, y
+`bench-contexto.ps1` hace 2 de 200 tokens con otro prompt más corto.
+
 Se deja activado porque en el peor caso empata y en el mejor gana, y los 950 MB extra de
 VRAM no dan problemas de convivencia con ComfyUI. **Si alguna vez necesitas esos 950 MB**,
 quítalo sin dudarlo: cambia el `MODEL` en `start-qwen.cmd` al fichero sin MTP y borra las
@@ -419,7 +446,7 @@ clavada (1%). Es normal, depende de cuántos tokens propuestos acierta el predic
   tenía 11. Si necesitas un dato exacto, oblígalo a ejecutar el comando que lo calcula.
 - **LTX-2 no cabe aquí.** Necesita ~24 GB (text encoder Gemma 3 12B + difusor 22B). Por eso
   FramePack, que declara 6 GB.
-- **MTP sí funciona aquí (+29,8%).** Hay tests publicados donde el speculative decoding sale
+- **MTP sí funciona aquí (+29,8% en el barrido, +21% en la tabla por contexto).** Hay tests publicados donde el speculative decoding sale
   peor que el baseline; en esta máquina gana claramente. Por eso había que medirlo.
   Usa el modelo `Qwen3.6-35B-A3B-MTP-UD-Q4_K_XL.gguf` (753 tensores, 20 más que el normal).
   El modelo sin MTP se conserva en `models\llm` por si alguna vez necesitas los 950 MB de VRAM.
@@ -428,9 +455,11 @@ clavada (1%). Es normal, depende de cuántos tokens propuestos acierta el predic
 
 ## Qué tal programa de verdad: 4 pruebas medidas
 
-Banco de pruebas real, con tests que se ejecutan. Los proyectos están en
-`C:\AI\bench-codigo`, `bench-codigo2`, `bench-codigo3` y `bench-codigo4` por si
-quieres repetirlas o hacer las tuyas.
+Banco de pruebas real, con tests que se ejecutan. Las carpetas `C:\AI\bench-codigo`,
+`bench-codigo2`, `bench-codigo3` y `bench-codigo4` guardan **el código que dejó el
+modelo al terminar, junto con los tests**: al ejecutarlos salen los 32 de 33 de la
+tabla. No están el código de partida ni los prompts que se le dieron, así que sirven para
+revisar el resultado, no para repetir la prueba con otro modelo tal cual.
 
 | Prueba | Qué medía | Resultado | Tiempo | Tokens |
 |---|---|---|---|---|
