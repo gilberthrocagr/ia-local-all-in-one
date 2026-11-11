@@ -12,5 +12,9 @@ set "AIDER_MODEL_METADATA_FILE=C:\AI\.aider.model.metadata.json"
 set "AIDER_EDIT_FORMAT=diff"
 set "AIDER_AUTO_COMMITS=false"
 set "AIDER_SHOW_MODEL_WARNINGS=false"
+REM Que Aider no anada '.aider*' al .gitignore de tu proyecto. El gitignore: false
+REM de C:\AI\.aider.conf.yml no llega aqui: Aider busca ese fichero en tu carpeta
+REM personal, en la raiz del repo y en la carpeta actual, no en C:\AI.
+set "AIDER_GITIGNORE=false"
 
 aider %*
