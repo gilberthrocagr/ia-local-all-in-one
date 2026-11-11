@@ -1,8 +1,9 @@
 @echo off
 REM ===== PRUEBA: Qwen3.6-35B-A3B con MTP / speculative decoding =====
-REM Identico a start-qwen.cmd salvo el modelo (variante MTP) y los flags
-REM --spec-type draft-mtp --spec-draft-n-max 2
-REM Baseline a batir: 28.20 tok/s
+REM Fue la prueba de MTP (modelo variante MTP y --spec-type draft-mtp
+REM --spec-draft-n-max 2). Gano y start-qwen.cmd usa ya esta misma
+REM configuracion; se conserva solo como referencia de la prueba.
+REM Baseline que habia que batir: 28.20 tok/s
 setlocal
 
 set "PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.2\bin\x64;%PATH%"

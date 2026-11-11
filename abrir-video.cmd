@@ -2,7 +2,9 @@
 title Abriendo FramePack...
 echo.
 echo  ATENCION: el video necesita la GPU entera (6 GB).
-echo  Se van a cerrar el chat y ComfyUI si estan abiertos.
+echo  Se va a cerrar el chat (llama-server) si esta abierto.
+echo  ComfyUI NO se cierra solo: si esta abierto, cierra su ventana antes.
+echo  (El acceso "IA - Video" si cierra los dos.)
 echo.
 pause
 taskkill /IM llama-server.exe /F >NUL 2>&1
