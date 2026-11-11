@@ -1,7 +1,15 @@
-from gradio_client import Client, handle_file
-import time, shutil, os
+"""Genera 1 segundo de video con FramePack y mide cuanto tarda.
 
-IMG = r"C:\AI\ComfyUI\ComfyUI\output\zimage_test2_00001_.png"
+Uso:  python fp-gen.py [imagen.png]
+Sin argumento usa la imagen de prueba que genero ComfyUI en la instalacion
+del autor (el colibri de zimage-test.json).
+"""
+from gradio_client import Client, handle_file
+import time, shutil, os, sys
+
+IMG = sys.argv[1] if len(sys.argv) > 1 else r"C:\AI\ComfyUI\ComfyUI\output\zimage_test2_00001_.png"
+if not os.path.isfile(IMG):
+    sys.exit("No existe la imagen de partida: {}".format(IMG))
 c = Client("http://127.0.0.1:7860")
 
 t0 = time.time()

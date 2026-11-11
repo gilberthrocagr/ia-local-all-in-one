@@ -4,8 +4,9 @@ Servidor MCP para FramePack: permite generar video desde Goose.
 FramePack no trae MCP, asi que este puente habla con su API de Gradio (:7860).
 
 AVISO DE VRAM: FramePack necesita practicamente toda la GPU. Si el LLM esta
-cargado, la generacion sera mucho mas lenta o fallara. La herramienta avisa
-de ello y ofrece liberar memoria.
+cargado, la generacion sera mucho mas lenta o fallara. framepack_status
+informa de la VRAM libre; liberarla (cerrar el LLM y ComfyUI) queda en
+manos del usuario.
 
 VELOCIDAD MEDIDA en esta maquina: ~10,5 minutos por CADA SEGUNDO de video.
 """
@@ -47,12 +48,12 @@ def framepack_status() -> str:
     vram = "desconocida"
     try:
         out = subprocess.run(
-            ["nvidia-smi", "--query-gpu=memory.used,memory.free",
+            ["nvidia-smi", "--query-gpu=memory.used,memory.free,memory.total",
              "--format=csv,noheader,nounits"],
             capture_output=True, text=True, timeout=10,
         ).stdout.strip().splitlines()[0]
-        used, free = [int(x.strip()) for x in out.split(",")]
-        vram = f"{used} MiB usados, {free} MiB libres de 6141"
+        used, free, total = [int(x.strip()) for x in out.split(",")]
+        vram = f"{used} MiB usados, {free} MiB libres de {total}"
     except Exception:
         pass
 

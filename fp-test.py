@@ -1,5 +1,5 @@
-from gradio_client import Client, handle_file
-import time, sys
+"""Lista los endpoints de la API de Gradio de FramePack (el que usa es /process)."""
+from gradio_client import Client
 
 c = Client("http://127.0.0.1:7860")
 print("=== ENDPOINTS DISPONIBLES ===")

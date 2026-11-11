@@ -11,13 +11,13 @@ foreach ($n in 3,4,5) {
     Get-Process llama-server -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
     Start-Sleep -Seconds 4
 
-    $args = @('-m', $MODEL, '--n-cpu-moe','99','--n-gpu-layers','99','--flash-attn','on',
+    $argumentos = @('-m', $MODEL, '--n-cpu-moe','99','--n-gpu-layers','99','--flash-attn','on',
               '-ctk','q8_0','-ctv','q8_0','-c','65536','-b','512','-ub','128',
               '--load-mode','mlock','--jinja','-a','qwen3.6','--reasoning-budget','1500',
               '--spec-type','draft-mtp','--spec-draft-n-max',"$n",
               '--temp','0.6','--top-p','0.95','--top-k','20',
               '--host','127.0.0.1','--port','8080')
-    Start-Process -FilePath $BIN -ArgumentList $args -WindowStyle Hidden
+    Start-Process -FilePath $BIN -ArgumentList $argumentos -WindowStyle Hidden
 
     $ready = $false
     for ($i=0; $i -lt 50; $i++) {
