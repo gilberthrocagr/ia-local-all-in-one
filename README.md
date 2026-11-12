@@ -5,6 +5,9 @@ salvedad: la licencia de Open WebUI, ver abajo) en un portátil con una **NVIDIA
 Ada de 6 GB de VRAM** (ThinkPad P16v Gen 2, Core Ultra 7 155H, 64 GB de RAM). Windows
 nativo, sin WSL2 ni Docker.
 
+> ¿Tienes un **Mac con Apple Silicon**? La versión hermana, solo para programar desde la
+> Terminal, está en [ia-local-mac](https://github.com/gilberthrocagr/ia-local-mac).
+
 Este repositorio contiene **los scripts y configuraciones**, no los modelos: son 110 GB
 descargables y quedan fuera (ver `.gitignore`).
 
